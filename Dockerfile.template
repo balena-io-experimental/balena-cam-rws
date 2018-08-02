@@ -1,0 +1,15 @@
+FROM resin/%%RESIN_MACHINE_NAME%%-debian:jessie
+
+RUN apt-get update \
+    && apt-get install -yq wget init-system-helpers pulseaudio\
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/src/app
+
+RUN wget -q https://github.com/kclyu/rpi-webrtc-streamer-deb/raw/master/rws_0.73.2_armhf.deb \
+    && dpkg -i ./rws_0.73.2_armhf.deb && rm *.deb \
+    || apt-get -f install
+
+ENV INITSYSTEM on
+
+CMD ["systemctl", "start", "rws"]
